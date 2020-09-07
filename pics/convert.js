@@ -8,7 +8,7 @@ function base64_encode(file) {
     return 'data:'+mime+';base64,' + b
 }
 
-var txt = ''
+var txt = 'var imgzz = {}\n\n'
 
 fs.readdir('.', function(_, dirs){
     dirs.forEach(function(dir){
@@ -25,7 +25,7 @@ fs.readdir('.', function(_, dirs){
                 filez[name] = base64_encode(dir+'/'+file)
                 console.log(dir+'/'+file)
             });
-            const str = "var "+dir+" = " +
+            const str = "imgzz."+dir+" = " +
                 JSON.stringify(filez, null, 2)
             txt += str + '\n\n'
         });
@@ -33,8 +33,17 @@ fs.readdir('.', function(_, dirs){
 })
 
 setTimeout(()=>{
-    fs.writeFile('base64.js', txt, function (err) {
+    fs.writeFile('../js/img.js', txt + end, function (err) {
         if (err) return console.log(err);
         console.log('File Written!');
     });
 },2000)
+
+var end = 'var img = {}; '+
+'function loadImgs(){'+
+  'for (const [key, value] of Object.entries(imgzz)) {'+
+    'for (const [name, base64] of Object.entries(value)) {'+
+      'img[name] = loadImage(base64)'+
+    '}'+
+  '}'+
+'}'
